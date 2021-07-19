@@ -109,24 +109,23 @@ fn main(){
             #version 140
 
             in vec3 position;
-            out vec3 pos;
 
-            uniform mat4 matrix;
-            uniform mat4 scale_mat;
+            uniform mat4 m1;
+            uniform mat4 m2;
+            uniform mat4 m3;
+            uniform mat4 m4;
 
             void main() {
-                pos = position;
-                gl_Position = scale_mat * (matrix * vec4(position, 1.0));
+                gl_Position = m1 * (m2 * (m3 * (m4 * vec4(position, 1.0))));
             }
         "#;
         let fragment_shader_src = r#"
             #version 140
 
-            in vec3 pos;
             out vec4 color;
 
             void main() {
-                color = vec4(pos, 1.0);
+                color = vec4(1.0, 0.2, 0.2, 1.0);
             }
         "#;
         let program = Program::from_source(&display, vertex_shader_src, fragment_shader_src, None).unwrap();
@@ -137,14 +136,16 @@ fn main(){
         }
 
         let uniforms = uniform!{
-            matrix: x_rot_mat(t),
-            scale_mat: scale_mat(0.6)
+            m1: x_rot_mat(t),
+            m2: y_rot_mat(t),
+            m3: z_rot_mat(t),
+            m4: scale_mat(0.6),
         };
 
         let mut frame = display.draw();
         frame.clear_color(0.0, 0.0, 0.0, 1.0); // set to blank;
-        // frame.draw((&vertex_buffer, &normals), &indices, &program, &uniforms, &Default::default()).unwrap();
-        frame.draw(&vertex_buffer, &indices, &program, &uniforms, &Default::default()).unwrap();
+        frame.draw((&vertex_buffer, &normals), &indices, &program, &uniforms, &Default::default()).unwrap();
+        // frame.draw(&vertex_buffer, &indices, &program, &uniforms, &Default::default()).unwrap();
         frame.finish().unwrap();
 
         let next_frame_time = Instant::now() + Duration::from_nanos(16_666_667);
