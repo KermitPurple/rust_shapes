@@ -26,7 +26,7 @@ fn main(){
     let wb = glutin::window::WindowBuilder::new() // create window builder
         .with_title("Shapes") // title
         .with_position(glutin::dpi::PhysicalPosition::new(0, 0)) // in top left corner
-        .with_inner_size(glutin::dpi::LogicalSize::new(1024.0, 768.0)); // size
+        .with_inner_size(glutin::dpi::LogicalSize::new(768.0, 768.0)); // size
     let cb = glutin::ContextBuilder::new(); // create context builder
     let display = Display::new(wb, cb, &event_loop).unwrap(); // create display
 
@@ -108,10 +108,10 @@ fn main(){
                 [0.0, 0.0, 0.0, 1.0f32],
             ],
             scale_mat: [
-                [0.01, 0.0, 0.0, 0.0],
-                [0.0, 0.01, 0.0, 0.0],
-                [0.0, 0.0, 0.01, 0.0],
-                [0.0, 0.0, 0.0, 0.01f32],
+                [0.5, 0.0, 0.0, 0.0],
+                [0.0, 0.5, 0.0, 0.0],
+                [0.0, 0.0, 0.5, 0.0],
+                [0.0, 0.0, 0.0, 1.0f32],
             ]
         };
 
