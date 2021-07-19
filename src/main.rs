@@ -10,12 +10,12 @@ use std::time::{Instant, Duration};
 
 #[derive(Copy, Clone)]
 struct Vertex {
-    position: [f32;2],
+    position: [f32; 3],
 }
 
 impl Vertex {
-    fn new(x: f32, y: f32) -> Self {
-        Self{ position: [x, y] }
+    fn new(x: f32, y: f32, z: f32) -> Self {
+        Self{ position: [x, y, z] }
     }
 }
 
@@ -35,33 +35,33 @@ fn main(){
     event_loop.run(move |ev, _, control_flow|{ // run event loop
 
         let tri_shape = vec![
-            Vertex::new(0.0, 0.5),
-            Vertex::new(-0.5, -0.5),
-            Vertex::new(0.5, -0.5),
+            Vertex::new(0.0, 0.5, -0.5),
+            Vertex::new(-0.5, -0.5, 0.0),
+            Vertex::new(0.5, -0.5, 0.5),
         ];
         let vertex_buffer = glium::VertexBuffer::new(&display, &tri_shape).unwrap();
         let indices = glium::index::NoIndices(glium::index::PrimitiveType::TrianglesList);
         let vertex_shader_src = r#"
             #version 140
 
-            in vec2 position;
-            out vec2 pos;
+            in vec3 position;
+            out vec3 pos;
 
             uniform mat4 matrix;
 
             void main() {
                 pos = position;
-                gl_Position = matrix * vec4(position, 0.0, 1.0);
+                gl_Position = matrix * vec4(position, 1.0);
             }
         "#;
         let fragment_shader_src = r#"
             #version 140
 
-            in vec2 pos;
+            in vec3 pos;
             out vec4 color;
 
             void main() {
-                color = vec4(pos, 0.5, 1.0);
+                color = vec4(pos, 1.0);
             }
         "#;
         let program = Program::from_source(&display, vertex_shader_src, fragment_shader_src, None).unwrap();
