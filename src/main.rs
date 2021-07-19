@@ -21,6 +21,42 @@ impl Vertex {
 
 implement_vertex!(Vertex, position);
 
+fn x_rot_mat(theta: f32) -> [[f32; 4]; 4] {
+    [
+        [1.0, 0.0, 0.0, 0.0],
+        [0.0, theta.cos(), -theta.sin(), 0.0],
+        [0.0, theta.sin(), theta.cos(), 0.0],
+        [0.0, 0.0, 0.0, 1.0f32],
+    ]
+}
+
+fn y_rot_mat(theta: f32) -> [[f32; 4]; 4] {
+    [
+        [theta.cos(), theta.sin(), 0.0, 0.0],
+        [-theta.sin(), theta.cos(), 0.0, 0.0],
+        [0.0, 0.0, 1.0, 0.0],
+        [0.0, 0.0, 0.0, 1.0f32],
+    ]
+}
+
+fn z_rot_mat(theta: f32) -> [[f32; 4]; 4] {
+    [
+        [theta.cos(), 0.0, theta.sin(), 0.0],
+        [0.0, 1.0, 0.0, 0.0],
+        [-theta.sin(), 0.0, theta.cos(), 0.0],
+        [0.0, 0.0, 0.0, 1.0f32],
+    ]
+}
+
+fn scale_mat(scale: f32) -> [[f32; 4]; 4]{
+    [
+        [scale, 0.0, 0.0, 0.0],
+        [0.0, scale, 0.0, 0.0],
+        [0.0, 0.0, scale, 0.0],
+        [0.0, 0.0, 0.0, 1.0f32],
+    ]
+}
+
 fn main(){
     let mut event_loop = glutin::event_loop::EventLoop::new(); // create event loop
     let wb = glutin::window::WindowBuilder::new() // create window builder
@@ -101,18 +137,8 @@ fn main(){
         }
 
         let uniforms = uniform!{
-            matrix: [
-                [t.cos(), t.sin(), 0.0, 0.0],
-                [-t.sin(), t.cos(), 0.0, 0.0],
-                [0.0, 0.0, 1.0, 0.0],
-                [0.0, 0.0, 0.0, 1.0f32],
-            ],
-            scale_mat: [
-                [0.5, 0.0, 0.0, 0.0],
-                [0.0, 0.5, 0.0, 0.0],
-                [0.0, 0.0, 0.5, 0.0],
-                [0.0, 0.0, 0.0, 1.0f32],
-            ]
+            matrix: x_rot_mat(t),
+            scale_mat: scale_mat(0.6)
         };
 
         let mut frame = display.draw();
@@ -127,6 +153,7 @@ fn main(){
             glutin::event::Event::WindowEvent { event, .. } => match event {
                 glutin::event::WindowEvent::CloseRequested => {
                     *control_flow = glutin::event_loop::ControlFlow::Exit;
+                    return
                 },
                 _ => return,
             },
