@@ -34,13 +34,41 @@ fn main(){
     const TWO_PI: f32 = 3.14159265 * 2.0;
     event_loop.run(move |ev, _, control_flow|{ // run event loop
 
-        let tri_shape = vec![
-            Vertex::new(0.0, 0.5, -0.5),
-            Vertex::new(-0.5, -0.5, 0.0),
-            Vertex::new(0.5, -0.5, 0.5),
+        let vertices = [
+            Vertex::new(-1.0, -1.0, -1.0),
+            Vertex::new(1.0, -1.0, -1.0),
+            Vertex::new(1.0, 1.0, -1.0),
+            Vertex::new(-1.0, 1.0, -1.0),
+            Vertex::new(-1.0, -1.0, 1.0),
+            Vertex::new(1.0, -1.0, 1.0),
+            Vertex::new(1.0, 1.0, 1.0),
+            Vertex::new(-1.0, 1.0, 1.0),
         ];
-        let vertex_buffer = glium::VertexBuffer::new(&display, &tri_shape).unwrap();
-        let indices = glium::index::NoIndices(glium::index::PrimitiveType::TrianglesList);
+        let normals_arr = [
+            Vertex::new(0.0, 0.0, 1.0),
+            Vertex::new(1.0, 0.0, 0.0),
+            Vertex::new(0.0, 0.0, -1.0),
+            Vertex::new(-1.0, 0.0, 0.0),
+            Vertex::new(0.0, 1.0, 0.0),
+            Vertex::new(0.0, -1.0, 0.0)
+        ];
+        let indices_arr = [
+            0, 1, 3,
+            3, 1, 2,
+            1, 5, 2,
+            2, 5, 6,
+            5, 4, 6,
+            6, 4, 7,
+            4, 0, 7,
+            7, 0, 3,
+            3, 2, 7,
+            7, 2, 6,
+            4, 5, 0,
+            0, 5, 1u16
+        ];
+        let vertex_buffer = glium::VertexBuffer::new(&display, &vertices).unwrap();
+        let normals = glium::VertexBuffer::new(&display, &normals_arr).unwrap();
+        let indices = glium::IndexBuffer::new(&display, glium::index::PrimitiveType::TrianglesList, &indices_arr).unwrap();
         let vertex_shader_src = r#"
             #version 140
 
@@ -48,10 +76,11 @@ fn main(){
             out vec3 pos;
 
             uniform mat4 matrix;
+            uniform mat4 scale_mat;
 
             void main() {
                 pos = position;
-                gl_Position = matrix * vec4(position, 1.0);
+                gl_Position = scale_mat * (matrix * vec4(position, 1.0));
             }
         "#;
         let fragment_shader_src = r#"
@@ -77,11 +106,18 @@ fn main(){
                 [-t.sin(), t.cos(), 0.0, 0.0],
                 [0.0, 0.0, 1.0, 0.0],
                 [0.0, 0.0, 0.0, 1.0f32],
+            ],
+            scale_mat: [
+                [0.01, 0.0, 0.0, 0.0],
+                [0.0, 0.01, 0.0, 0.0],
+                [0.0, 0.0, 0.01, 0.0],
+                [0.0, 0.0, 0.0, 0.01f32],
             ]
         };
 
         let mut frame = display.draw();
         frame.clear_color(0.0, 0.0, 0.0, 1.0); // set to blank;
+        // frame.draw((&vertex_buffer, &normals), &indices, &program, &uniforms, &Default::default()).unwrap();
         frame.draw(&vertex_buffer, &indices, &program, &uniforms, &Default::default()).unwrap();
         frame.finish().unwrap();
 
