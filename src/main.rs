@@ -71,45 +71,48 @@ fn main(){
     event_loop.run(move |ev, _, control_flow|{ // run event loop
 
         let vertices = [
-            Vertex::new(-1.0,-1.0,-1.0),
-            Vertex::new(-1.0,-1.0, 1.0),
-            Vertex::new(-1.0, 1.0, 1.0),
-            Vertex::new(1.0, 1.0,-1.0),
-            Vertex::new(-1.0,-1.0,-1.0),
-            Vertex::new(-1.0, 1.0,-1.0),
-            Vertex::new(1.0,-1.0, 1.0),
-            Vertex::new(-1.0,-1.0,-1.0),
-            Vertex::new(1.0,-1.0,-1.0),
-            Vertex::new(1.0, 1.0,-1.0),
-            Vertex::new(1.0,-1.0,-1.0),
-            Vertex::new(-1.0,-1.0,-1.0),
-            Vertex::new(-1.0,-1.0,-1.0),
-            Vertex::new(-1.0, 1.0, 1.0),
-            Vertex::new(-1.0, 1.0,-1.0),
-            Vertex::new(1.0,-1.0, 1.0),
-            Vertex::new(-1.0,-1.0, 1.0),
-            Vertex::new(-1.0,-1.0,-1.0),
-            Vertex::new(-1.0, 1.0, 1.0),
-            Vertex::new(-1.0,-1.0, 1.0),
-            Vertex::new(1.0,-1.0, 1.0),
-            Vertex::new(1.0, 1.0, 1.0),
-            Vertex::new(1.0,-1.0,-1.0),
-            Vertex::new(1.0, 1.0,-1.0),
-            Vertex::new(1.0,-1.0,-1.0),
-            Vertex::new(1.0, 1.0, 1.0),
-            Vertex::new(1.0,-1.0, 1.0),
-            Vertex::new(1.0, 1.0, 1.0),
-            Vertex::new(1.0, 1.0,-1.0),
-            Vertex::new(-1.0, 1.0,-1.0),
-            Vertex::new(1.0, 1.0, 1.0),
-            Vertex::new(-1.0, 1.0,-1.0),
-            Vertex::new(-1.0, 1.0, 1.0),
+            // top (0, 0, 1.0)
+            Vertex::new(-1.0, -1.0, 1.0),
+            Vertex::new(1.0, -1.0, 1.0),
             Vertex::new(1.0, 1.0, 1.0),
             Vertex::new(-1.0, 1.0, 1.0),
-            Vertex::new(1.0,-1.0, 1.0)
-                ];
+            // bottom (0, 0, -1.0)
+            Vertex::new(-1.0, 1.0, -1.0),
+            Vertex::new(1.0, 1.0, -1.0),
+            Vertex::new(1.0, -1.0, -1.0),
+            Vertex::new(-1.0, -1.0, -1.0),
+            // right (1.0, 0, 0)
+            Vertex::new(1.0, -1.0, -1.0),
+            Vertex::new(1.0, 1.0, -1.0),
+            Vertex::new(1.0, 1.0, 1.0),
+            Vertex::new(1.0, -1.0, 1.0),
+            // left (-1.0, 0, 0)
+            Vertex::new(-1.0, -1.0, 1.0),
+            Vertex::new(-1.0, 1.0, 1.0),
+            Vertex::new(-1.0, 1.0, -1.0),
+            Vertex::new(-1.0, -1.0, -1.0),
+            // front (0, 1.0, 0)
+            Vertex::new(1.0, 1.0, -1.0),
+            Vertex::new(-1.0, 1.0, -1.0),
+            Vertex::new(-1.0, 1.0, 1.0),
+            Vertex::new(1.0, 1.0, 1.0),
+            // back (0, -1.0, 0)
+            Vertex::new(1.0, -1.0, 1.0),
+            Vertex::new(-1.0, -1.0, 1.0),
+            Vertex::new(-1.0, -1.0, -1.0),
+            Vertex::new(1.0, -1.0, -1.0),
+        ];
+
+        let indices_arr = [
+             0,  1,  2,  2,  3,  0, // top
+             4,  5,  6,  6,  7,  4, // bottom
+             8,  9, 10, 10, 11,  8, // right
+            12, 13, 14, 14, 15, 12, // left
+            16, 17, 18, 18, 19, 16, // front
+            20, 21, 22, 22, 23, 20u16, // back
+        ];
         let vertex_buffer = glium::VertexBuffer::new(&display, &vertices).unwrap();
-        let indices = glium::index::NoIndices(glium::index::PrimitiveType::TrianglesList);
+        let indices = glium::IndexBuffer::new(&display, glium::index::PrimitiveType::TrianglesList, &indices_arr).unwrap();
         let vertex_shader_src = r#"
             #version 140
 
